@@ -1,0 +1,116 @@
+# Model configuration
+model:
+  type: "beta_vae"  # Options: beta_vae, conv_vae
+  params:
+    input_dim: 784
+    hidden_dims: [400, 200]
+    latent_dim: 20
+    beta: 1.0
+    use_batch_norm: true
+    dropout: 0.1
+
+# Training configuration
+training:
+  max_epochs: 100
+  learning_rate: 1e-3
+  weight_decay: 1e-5
+  batch_size: 128
+  num_workers: 4
+  
+  # KL annealing
+  beta_start: 0.0
+  beta_end: 1.0
+  beta_schedule: "linear"  # Options: linear, cyclical, sigmoid
+  warmup_epochs: 10
+  
+  # Optimization
+  grad_clip: 0.0
+  scheduler:
+    type: "cosine"  # Options: cosine, plateau, none
+    eta_min: 1e-6
+    factor: 0.5
+    patience: 10
+    min_lr: 1e-6
+  
+  # Checkpointing
+  save_every_n_epochs: 10
+  save_top_k: 3
+  monitor: "val/total_loss"
+  mode: "min"
+
+# Data configuration
+data:
+  dataset: "mnist"  # Options: mnist, fashionmnist, celeba
+  data_dir: "./data"
+  image_size: 28
+  augment: false
+  val_split: 0.1
+  test_split: 0.1
+  normalize: true
+  add_noise: false
+  noise_std: 0.1
+
+# Evaluation configuration
+evaluation:
+  num_samples: 1000
+  num_batches: null
+  compute_fid: true
+  num_interpolation_pairs: 10
+  num_interpolation_steps: 10
+  latent_dims_to_traverse: [0, 1, 2, 3]
+  traversal_steps: 10
+  traversal_step_size: 2.0
+
+# Logging configuration
+logging:
+  log_every_n_steps: 50
+  log_images_every_n_epochs: 5
+  log_latent_space_every_n_epochs: 20
+  
+  # Wandb configuration
+  wandb:
+    project: "vae-implementation"
+    entity: null
+    tags: ["vae", "generative-models"]
+    notes: "VAE implementation with modern features"
+  
+  # TensorBoard configuration
+  tensorboard:
+    log_dir: "./logs/tensorboard"
+    comment: "vae_experiment"
+
+# Device configuration
+device:
+  auto: true  # Automatically select best device
+  # manual: "cuda"  # Override with specific device
+
+# Reproducibility
+seed: 42
+deterministic: true
+
+# Paths
+paths:
+  data_dir: "./data"
+  checkpoints_dir: "./checkpoints"
+  logs_dir: "./logs"
+  assets_dir: "./assets"
+  results_dir: "./results"
+
+# Sampling configuration
+sampling:
+  num_samples: 64
+  batch_size: 100
+  seed: null  # Use random seed if null
+  
+# Visualization configuration
+visualization:
+  save_dir: "./assets/visualizations"
+  dpi: 150
+  figsize: [12, 12]
+  cmap: "viridis"
+  
+  # Latent space visualization
+  latent_space:
+    method: "tsne"  # Options: tsne, pca, umap
+    num_samples: 1000
+    random_state: 42
